@@ -9,10 +9,10 @@ A browser extension that works like magic, offers flexible bookmark management. 
 
 ## TODO：
 
-- [*] 书签链接状态检查
-- [ - ] 书签内容符合检查
-- [-] 根据书签添加时间、使用时间排序
-- [-] 书签操作：搜索、删除、归档
+- [x] 书签链接状态检查
+- [x] 书签内容符合检查
+- [x] 根据书签添加时间、使用时间排序
+- [x] 书签操作：搜索、删除、归档
 - [ ] 检查重复链接
 - [ ] 检查空文件夹
 - [ ] 提升检查速度
