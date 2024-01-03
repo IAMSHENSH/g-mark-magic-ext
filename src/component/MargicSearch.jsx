@@ -12,7 +12,6 @@ function MargicSearch() {
   // 连接状态地址
   const [statusCheckNum, setStatusCheckNum] = useState(0)
 
-
   // 获取标签数据的书签，返回书签数组
   const getBookMarksList = (_data) => {
     let bookmarkList = []
@@ -127,17 +126,40 @@ function MargicSearch() {
         setOriginMarkList(bookmarkArr)
       }
       setOriginMarkMap(bookmarkMap)
-
     });
   }
 
   function onSortByAdded() {
     let bookmarkListTemp = JSON.parse(JSON.stringify(originMarkList))
-    bookmarkListTemp.sort((x, y) => {
-      return y.added - x.added
-    })
-    setBookmarkList(bookmarkListTemp)
+  
+    if (searchInput) {
+      // 进行搜索
+      const searchResult = bookmarkListTemp.filter(obj => {
+        return Object.values(obj).some(val => {
+          if (typeof val === 'string') {
+            return val.includes(searchInput)
+          }
+        })
+      });
+  
+      // 进行排序
+      searchResult.sort((x, y) => {
+        return y.added - x.added
+      })
+  
+      // 更新结果
+      setBookmarkList(searchResult)
+    } else {
+      // 不进行搜索，直接排序原始书签列表
+      bookmarkListTemp.sort((x, y) => {
+        return y.added - x.added
+      })
+
+      // 更新结果
+      setBookmarkList(bookmarkListTemp)
+    }
   }
+
   function onSortByUsed() {
     // 需要清洗掉没有打开过的
     let bookmarkListTemp = []
@@ -165,9 +187,8 @@ function MargicSearch() {
   function onMarkDel(_mark) {
     // 删除书签
     // remove()
-    chrome.bookmarks.remove(_mark.id, (item)=>{
+    chrome.bookmarks.remove(_mark.id, (item) => {
       // 删除成功，刷新列表
-
       let bookmarkListTemp = []
       for (let i = 0; i < bookmarkList.length; i++) {
         if (bookmarkList[i].id !== _mark.id) {
@@ -176,10 +197,10 @@ function MargicSearch() {
       }
       setBookmarkList(bookmarkListTemp)
     })
-
   }
+
   async function onMarkFile(_mark) {
-    let searchResult = await chrome.bookmarks.search({title: 'MarkMagicFile'});
+    let searchResult = await chrome.bookmarks.search({ title: 'MarkMagicFile' });
     if (searchResult.length === 0) {
       // 形成新目录
       const magicBookMarkRoot = await chrome.bookmarks.create({
@@ -191,8 +212,6 @@ function MargicSearch() {
       parentId: searchResult[0].id
     });
   }
-
-
 
   // 验证是否失效
   async function onIsAliveCheck() {
@@ -243,7 +262,6 @@ function MargicSearch() {
           <button className='mx-1 rounded-md bg-blue-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
             onClick={onSearch}
           >SEARCH</button>
-
           {
             statusCheckNum ? '' :
               <button className='mx-1 rounded-md bg-cyan-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'
@@ -261,7 +279,6 @@ function MargicSearch() {
           }
         </div>
       </div>
-
       <div className="mt-1">
         <input
           type="text"
@@ -292,7 +309,6 @@ function MargicSearch() {
           ></button>
         </div>
       </div>
-
       <ul role="list" className="mt-1 divide-y divide-gray-100">
         {bookmarkList.map((markItem) => (
           <li key={markItem.id} className="flex justify-between gap-x-6 px-1 py-2 rounded-md hover:bg-slate-100" >
@@ -353,7 +369,6 @@ function MargicSearch() {
           </li>
         ))}
       </ul>
-
     </>
   )
 }
