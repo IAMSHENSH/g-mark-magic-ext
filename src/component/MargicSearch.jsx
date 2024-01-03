@@ -19,20 +19,22 @@ function MargicSearch() {
       const element = _data[i];
       // 根据 url 来判断是否目录
       if (element.url) {
-        const addedString = utils.timecodeFormat(element.dateAdded);
-        const lastUsedString = element.dateLastUsed
-          ? utils.timecodeFormat(element.dateLastUsed)
-          : "";
-        bookmarkList.push({
-          title: element.title,
-          url: element.url,
-          added: element.dateAdded,
-          addedString: addedString,
-          lastUsed: element.dateLastUsed,
-          lastUsedString: lastUsedString,
-          id: element.id,
-          status: -1,
-        });
+        if (!element.url.startsWith("edge://")){
+          const addedString = utils.timecodeFormat(element.dateAdded);
+          const lastUsedString = element.dateLastUsed
+            ? utils.timecodeFormat(element.dateLastUsed)
+            : "";
+          bookmarkList.push({
+            title: element.title,
+            url: element.url,
+            added: element.dateAdded,
+            addedString: addedString,
+            lastUsed: element.dateLastUsed,
+            lastUsedString: lastUsedString,
+            id: element.id,
+            status: -1,
+          });
+        }
       } else {
         // 是目录
         let childrenCatalog = getBookMarksList(element.children);
@@ -48,21 +50,23 @@ function MargicSearch() {
       const element = _data[i];
       // 根据 url 来判断是否目录
       if (element.url) {
-        const addedString = utils.timecodeFormat(element.dateAdded);
-        const lastUsedString = element.dateLastUsed
-          ? utils.timecodeFormat(element.dateLastUsed)
-          : "";
-        bookmarkMap[element.id] = {
-          title: element.title,
-          url: element.url,
-          added: element.dateAdded,
-          addedString: addedString,
-          lastUsed: element.dateLastUsed,
-          lastUsedString: lastUsedString,
-          id: element.id,
-          // status : 默认 -1 ,不可连接 0， 可连接 1， 超时： 2，内容不对： 3
-          status: -1,
-        };
+        if (!element.url.startsWith("edge://")){
+          const addedString = utils.timecodeFormat(element.dateAdded);
+          const lastUsedString = element.dateLastUsed
+            ? utils.timecodeFormat(element.dateLastUsed)
+            : "";
+          bookmarkMap[element.id] = {
+            title: element.title,
+            url: element.url,
+            added: element.dateAdded,
+            addedString: addedString,
+            lastUsed: element.dateLastUsed,
+            lastUsedString: lastUsedString,
+            id: element.id,
+            // status : 默认 -1 ,不可连接 0， 可连接 1， 超时： 2，内容不对： 3
+            status: -1,
+          };
+        }
       } else {
         // 是目录
         let childrenCatalog = getBookMarksMap(element.children);
