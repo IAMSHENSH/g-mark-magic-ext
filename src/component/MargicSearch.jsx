@@ -92,15 +92,15 @@ function MargicSearch() {
   }
 
   const readLocalStorage = async (key) => {
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.get([key], function (result) {
-        if (result[key] === undefined) {
-          reject();
-        } else {
-          resolve(result[key]);
-        }
+      return new Promise((resolve, reject) => {
+        chrome.storage.local.get([key], function (result) {
+          if (result[key] === "undefined") {
+            reject();
+          } else {
+            resolve(result[key]);
+          }
+        });
       });
-    });
   };
 
   // URL 状态检查的超时时间
