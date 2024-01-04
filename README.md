@@ -34,7 +34,7 @@ This extension enjoys the simplified development and eye-catching design enabled
 
 MarkMagic sprung from the vision of dedicated developers rich with an ardent passion for open-source philosophy and cutting-edge innovations. Our mission is deliverance of software products prompt to use, geared at streamlining everyday net surfing practices, thus enriching user efficiency.
 
-![Star History Chart](https://api.star-history.com/svg?repos=IAMSHENSH/g-mark-magic-ext&type=Timeline)(https://star-history.com/#IAMSHENSH/g-mark-magic-ext&Timeline)
+![Star History Chart](https://api.star-history.com/svg?repos=IAMSHENSH/g-mark-magic-ext&type=Timeline)
 
 ## 🙌 Guidelines for Contributing
 
