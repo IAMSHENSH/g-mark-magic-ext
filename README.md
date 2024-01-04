@@ -7,6 +7,11 @@ Your browser's enchanting solution for effortless, intelligent bookmark manageme
 A browser extension that works like magic, offers flexible bookmark management. Easily check bookmark link statuses, ensure content compliance, and smartly sort by addition or usage time. Actions like searching, deleting, and archiving bookmarks are just the beginning. Future updates will include features like checking for duplicate links, empty folders, and enhancing scanning speed. Upcoming upgrades will employ AI for semantic content analysis instead of simple string matching. Ultimately, it will provide data analysis, categorization, tagging, association, and automated responses based on user actions for an enhanced bookmark management experience.
 
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=IAMSHENSH/g-mark-magic-ext&type=Timeline)](https://star-history.com/#IAMSHENSH/g-mark-magic-ext&Timeline)
+
+
 ## TODO：
 
 - [x] 书签链接状态检查
