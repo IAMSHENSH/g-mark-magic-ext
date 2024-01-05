@@ -16,6 +16,9 @@ This extension enjoys the simplified development and eye-catching design enabled
   - Leverage AI insights for dimensional articulation alongside text probing.
   - Autonomous bookmarking strings and handling.
 
+|![Screenshot of MarkMagic](./docs/imgs/screenshot_1.jpg)|![Screenshot of MarkMagic](./docs/imgs/screenshot_2.jpg)|
+|---|---|
+
 ## 🛠 Setup Steps
 
 1. Navigate to your browser’s extension store.
@@ -35,6 +38,7 @@ This extension enjoys the simplified development and eye-catching design enabled
 MarkMagic sprung from the vision of dedicated developers rich with an ardent passion for open-source philosophy and cutting-edge innovations. Our mission is deliverance of software products prompt to use, geared at streamlining everyday net surfing practices, thus enriching user efficiency.
 
 ![Star History Chart](https://api.star-history.com/svg?repos=IAMSHENSH/g-mark-magic-ext&type=Timeline)
+
 
 ## 🙌 Guidelines for Contributing
 
