@@ -16,6 +16,9 @@
   - 应用 AI 进行深入文本分析。
   - 书签数据自动标注及管理。
 
+|![Screenshot of MarkMagic](./docs/imgs/screenshot_1.jpg)|![Screenshot of MarkMagic](./docs/imgs/screenshot_2.jpg)|
+|---|---|
+
 ## 🛠 安装方法
 
 1. 访问您浏览器的扩展插件市场。
