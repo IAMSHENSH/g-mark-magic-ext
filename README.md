@@ -1,8 +1,6 @@
-# 🔖 MarkMagic Browser Add-On
+# 🔖 MarkMagic Browser Extension
 
 Introducing MarkMagic, your ultimate tool for managing digital bookmarks with ease. This browser add-on aims to streamline how you organize and interact with bookmarks. With MarkMagic, you can seamlessly verify live bookmark links, secure the data they hold and smartly arrange them by frequency and time of addition. This handy tool features index searching, mass removal, and orderly sorting features just a few clicks away. Exciting updates forthcoming include detection of redundant bookmarks, purging of barren bookmark folders, and refined search velocities. A future upgrade entails AI-powered semantic analysis that transcends basic keyword lookup. Developed for users desiring to sift and categorize data reflecting their Xi habits, MarkMagic casts itself as your personalized, automatic bookmark-management system for an extraordinary browsing affair.
-
-This extension enjoys the simplified development and eye-catching design enabled by React, Vite, and Tailwind CSS.
 
 ## 🧠 Key Elements
 
@@ -19,12 +17,17 @@ This extension enjoys the simplified development and eye-catching design enabled
 |![Screenshot of MarkMagic](./docs/imgs/screenshot_1.jpg)|![Screenshot of MarkMagic](./docs/imgs/screenshot_2.jpg)|
 |---|---|
 
-## 🛠 Setup Steps
+## 🔨 How To Install
 
-1. Navigate to your browser’s extension store.
-2. Type "MarkMagic" into the search area to find the tool.
-3. Hit "Install" or "Attach to Browser" button.
-4. Upon installation completion, look for the MarkMagic symbol in your browser's toolbox to begin.
+Installing MarkMagic, your go-to browser extension, is a breeze whether you're using Chrome or Edge. This handy tool is just a few clicks away from enhancing your browsing experience with its magic. To get started, simply follow the links provided below to navigate to the respective web store for your browser.
+
+For Chrome users, find MarkMagic on the Chrome Web Store by clicking [here](https://chromewebstore.google.com/detail/markmagic/efpddbdnjokoakknlfljkcndcaonilpg).
+
+~~Edge enthusiasts can locate the extension on the Microsoft Edge Addons page by clicking [here]().~~
+
+Edge users will have to wait a little longer for the results of the review.
+
+Once you're on the store page, click the "Add to Browser" button. MarkMagic willbe ready to cast its spell on your internet adventures!
 
 ## 📘 How To Use
 
@@ -34,6 +37,8 @@ This extension enjoys the simplified development and eye-catching design enabled
 - Employ intuitive structuring to finetune your bookmark assembler.
 
 ## 👨‍💻 Info for Developers
+
+This extension enjoys the simplified development and eye-catching design enabled by React, Vite, and Tailwind CSS.
 
 MarkMagic sprung from the vision of dedicated developers rich with an ardent passion for open-source philosophy and cutting-edge innovations. Our mission is deliverance of software products prompt to use, geared at streamlining everyday net surfing practices, thus enriching user efficiency.
 
