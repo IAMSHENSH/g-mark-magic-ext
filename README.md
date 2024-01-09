@@ -23,9 +23,8 @@ Installing MarkMagic, your go-to browser extension, is a breeze whether you're u
 
 For Chrome users, find MarkMagic on the Chrome Web Store by clicking [here](https://chromewebstore.google.com/detail/markmagic/efpddbdnjokoakknlfljkcndcaonilpg).
 
-~~Edge enthusiasts can locate the extension on the Microsoft Edge Addons page by clicking [here]().~~
+Edge enthusiasts can locate the extension on the Microsoft Edge Addons page by clicking [here](https://microsoftedge.microsoft.com/addons/detail/markmagic/chdnocboifbdehfnghinbjjcnklgdafm).
 
-Edge users will have to wait a little longer for the results of the review.
 
 Once you're on the store page, click the "Add to Browser" button. MarkMagic willbe ready to cast its spell on your internet adventures!
 
