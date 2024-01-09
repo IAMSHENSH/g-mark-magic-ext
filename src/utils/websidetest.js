@@ -23,7 +23,7 @@ export async function testStatus2(_url, _timeout) {
     if (error.name === 'AbortError') {
       // console.warn('请求超时！');
     } else {
-      // console.error('发生错误：', error);
+      console.error('testStatus2 发生错误：', error);
     }
     return false;
   }
@@ -78,17 +78,17 @@ export async function testContentValidation(url, expectedContent) {
 
 // DNS 解析问题检测
 // const dns = require('dns');
-import dns from 'dns'
-export async function testDNSResolution(url) {
-  try {
-    const domain = new URL(url).hostname;
-    await dns.promises.resolve(domain);
-    return true;
-  } catch (error) {
-    // console.error(`${url} - 错误: ${error.message}`);
-    return false;
-  }
-}
+// import dns from 'dns'
+// export async function testDNSResolution(url) {
+//   try {
+//     const domain = new URL(url).hostname;
+//     await dns.promises.resolve(domain);
+//     return true;
+//   } catch (error) {
+//     // console.error(`${url} - 错误: ${error.message}`);
+//     return false;
+//   }
+// }
 
 // 服务端错误检测
 export async function testServerError(url) {
@@ -113,18 +113,18 @@ export async function testRedirect(url) {
 }
 
 // 证书问题检测
-import tls from 'tls'
-export async function testCertificateError(url) {
-  try {
-    const domain = new URL(url).hostname;
-    const options = { servername: domain, rejectUnauthorized: true };
-    await tls.connect(443, domain, options);
-    return true;
-  } catch (error) {
-    // console.error(`${url} - 错误: ${error.message}`);
-    return false;
-  }
-}
+// import tls from 'tls'
+// export async function testCertificateError(url) {
+//   try {
+//     const domain = new URL(url).hostname;
+//     const options = { servername: domain, rejectUnauthorized: true };
+//     await tls.connect(443, domain, options);
+//     return true;
+//   } catch (error) {
+//     // console.error(`${url} - 错误: ${error.message}`);
+//     return false;
+//   }
+// }
 
 // 内容更改检测
 export async function testContentChange(url, previousContent) {

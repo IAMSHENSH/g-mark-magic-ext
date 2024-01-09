@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react'
 import * as utils from '../utils/utils.js'
-import * as websidetest from '../utils/websidetest.js'
+import { AutoSizer, List } from 'react-virtualized';
+import 'react-virtualized/styles.css'; // only needs to be imported once
 
 function MargicSearch() {
   const [searchInput, setSearchInput] = useState('')
   // 用户原始数组，避免排序显示弄坏
   const [originMarkList, setOriginMarkList] = useState([])
-  const [originMarkMap, setOriginMarkMap] = useState({})
   // 组件显示数组
   const [bookmarkList, setBookmarkList] = useState([])
   // 连接状态地址
   const [statusCheckNum, setStatusCheckNum] = useState(0)
-
 
   // 获取标签数据的书签，返回书签数组
   const getBookMarksList = (_data) => {
@@ -75,7 +74,6 @@ function MargicSearch() {
   }
 
   function onSearch() {
-    // console.info('--> MargicSearch : onSearch ', searchInput)
     const tempList = JSON.parse(JSON.stringify(originMarkList))
     const res = tempList.filter(obj => {
       return Object.values(obj).some(val => {
@@ -84,32 +82,22 @@ function MargicSearch() {
         }
       })
     });
-    // console.log('onSearch', res);
     setBookmarkList(res)
   }
 
   const readLocalStorage = async (key) => {
     return new Promise((resolve, reject) => {
       chrome.storage.local.get([key], function (result) {
-        if (result[key] === undefined) {
-          reject();
-        } else {
-          resolve(result[key]);
-        }
+        resolve(result[key]);
       });
     });
   };
 
-  // URL 状态检查的超时时间
-  const g_url_timeout = 5000
-
   async function onLoad() {
     // 获取所有书签树结构
     chrome.bookmarks.getTree(async function (bookmarkArray) {
-      // console.log(bookmarkArray);
       const bookmarkArr = getBookMarksList(bookmarkArray)
       const bookmarkMap = getBookMarksMap(bookmarkArray)
-
       const mm_mark_map = await readLocalStorage('mm_mark_map')
       if (mm_mark_map) {
         const markMap = mm_mark_map
@@ -127,7 +115,6 @@ function MargicSearch() {
         setOriginMarkList(bookmarkArr)
       }
       setOriginMarkMap(bookmarkMap)
-
     });
   }
 
@@ -140,15 +127,21 @@ function MargicSearch() {
   }
   function onSortByUsed() {
     // 需要清洗掉没有打开过的
-    let bookmarkListTemp = []
+    let bookmarkListTemp = [], bookmarkListElse = []
     for (let i = 0; i < originMarkList.length; i++) {
       if (originMarkList[i].lastUsed) {
         bookmarkListTemp.push(originMarkList[i])
+      } else {
+        bookmarkListElse.push(originMarkList[i])
       }
     }
     bookmarkListTemp.sort((x, y) => {
       return y.lastUsed - x.lastUsed
     })
+    bookmarkListElse.sort((x, y) => {
+      return y.added - x.added
+    })
+    bookmarkListTemp.push(...bookmarkListElse)
     setBookmarkList(bookmarkListTemp)
   }
 
@@ -165,9 +158,8 @@ function MargicSearch() {
   function onMarkDel(_mark) {
     // 删除书签
     // remove()
-    chrome.bookmarks.remove(_mark.id, (item)=>{
-      // 删除成功，刷新列表
-
+    chrome.bookmarks.remove(_mark.id, (item) => {
+      // console.info('--> 删除成功: ',_mark)
       let bookmarkListTemp = []
       for (let i = 0; i < bookmarkList.length; i++) {
         if (bookmarkList[i].id !== _mark.id) {
@@ -179,46 +171,83 @@ function MargicSearch() {
 
   }
   async function onMarkFile(_mark) {
-    let searchResult = await chrome.bookmarks.search({title: 'MarkMagicFile'});
+    // 如果没有回收站着创建
+    //  搜索一下有没有，可能有多个，放到第一个
+    let searchResult = await chrome.bookmarks.search({ title: 'MarkMagicFile' });
+    // console.info('--> searchResult : ', searchResult)
     if (searchResult.length === 0) {
       // 形成新目录
       const magicBookMarkRoot = await chrome.bookmarks.create({
         title: 'MarkMagicFile',
       });
       searchResult.push(magicBookMarkRoot)
+      // console.info('--> onMarkFile : ', magicBookMarkRoot)
     }
     const moveResult = await chrome.bookmarks.move(_mark.id, {
       parentId: searchResult[0].id
     });
   }
 
-
-
-  // 验证是否失效
-  async function onIsAliveCheck() {
-    setStatusCheckNum(1)
-    let booksMarkMap = structuredClone(originMarkMap)
-    for (let i = 0; i < originMarkList.length; i++) {
-      setStatusCheckNum(i + 1)
-      const element = originMarkList[i];
-      const isAlive = await websidetest.testStatus2(element.url, g_url_timeout)
-      booksMarkMap[element.id].status = isAlive ? 1 : 0
-      if (isAlive) {
-        const isRight = await websidetest.testContentValidation(element.url, element.title)
-        booksMarkMap[element.id].status = isRight ? 1 : 3
-      }
-    }
-    setStatusCheckNum(0)
-    chrome.storage.local.set({ mm_mark_map: booksMarkMap }, function () {
-    });
-    // 更新到列表
-    let nextMarkList = bookmarkList.map(item => {
-      return {
-        ...item,
-        status: booksMarkMap[item.id] ? booksMarkMap[item.id].status : -1
-      }
-    })
-    setBookmarkList(nextMarkList)
+  function rowRenderer({
+    key, // Unique key within array of rows
+    index, // Index of row within collection
+    style, // Style object to be applied to row (to position it)
+  }) {
+    return (
+      <div key={key} className="flex justify-between gap-x-6 px-1 py-2 rounded-md hover:bg-slate-100" style={style}>
+        <div className="flex min-w-0 gap-x-4">
+          <div
+            className="flex flex-col justify-center rounded-full bg-emerald-500/20 p-1 cursor-pointer"
+            onClick={() => { chrome.tabs.create({ url: bookmarkList[index].url }) }}>
+            {bookmarkList[index].status === -1 ? (
+              <div className="h-2 w-2 rounded-full bg-gray-500" />
+            ) : ''}
+            {bookmarkList[index].status === 0 ? (
+              <div className="h-2 w-2 rounded-full bg-red-500" />
+            ) : ''}
+            {bookmarkList[index].status === 1 ? (
+              <div className="h-2 w-2 rounded-full bg-emerald-500" />
+            ) : ''}
+            {bookmarkList[index].status === 3 ? (
+              <div className="h-2 w-2 rounded-full bg-yellow-500" />
+            ) : ''}
+          </div>
+          <div className="min-w-0 flex-auto">
+            <p className="text-sm font-semibold leading-6 text-gray-900 truncate cursor-pointer"
+              title={bookmarkList[index].title}
+              onClick={() => { chrome.tabs.create({ url: bookmarkList[index].url }) }}
+            >{bookmarkList[index].title}</p>
+            <p className="mt-1 text-xs leading-5 text-gray-500 truncate "
+              title={bookmarkList[index].url}>{bookmarkList[index].url}</p>
+          </div>
+        </div>
+        <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+          <div>
+            <p className="text-sm leading-6 text-gray-900">Added {bookmarkList[index].addedString}</p>
+          </div>
+          <div className='flex items-center'>
+            {!bookmarkList[index].lastUsed ? (
+              <p className="mt-1 text-xs leading-5 text-gray-500">
+                <span >{bookmarkList[index].lastUsedString}</span>
+              </p>
+            ) : (
+              <div className="flex items-center gap-x-1.5">
+                <div className="flex-none rounded-full bg-emerald-500/20 p-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                </div>
+                <p className="text-xs leading-5 text-gray-500">LastUsed {bookmarkList[index].lastUsedString}</p>
+              </div>
+            )}
+            <button className='mx-1 rounded-md bg-gray-300 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600'
+              onClick={() => { onMarkFile(bookmarkList[index].markItem) }}
+            >FILE</button>
+            <button className='mx-1 rounded-md bg-red-300 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600'
+              onClick={() => { onMarkDel(bookmarkList[index].markItem) }}
+            >DEL</button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   useEffect(() => {
@@ -229,7 +258,6 @@ function MargicSearch() {
       <div className='flex items-center justify-between mb-2'>
         <div className='flex'>
           <label className="block text-sm font-medium leading-6 text-gray-900">
-            {/* MargicSearch */}
             BookMarksNumber
           </label>
           {
@@ -246,9 +274,15 @@ function MargicSearch() {
 
           {
             statusCheckNum ? '' :
-              <button className='mx-1 rounded-md bg-cyan-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'
-                onClick={onIsAliveCheck}
-              >CHECK</button>
+              <button
+                className='mx-1 rounded-md bg-cyan-600 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'
+                onClick={() => {
+                  if (chrome.runtime.openOptionsPage) {
+                    chrome.runtime.openOptionsPage();
+                  } else {
+                    window.open(chrome.runtime.getURL('options.html'));
+                  }
+                }}>GO CHECK</button>
           }
           {
             !statusCheckNum ? '' :
@@ -293,67 +327,20 @@ function MargicSearch() {
         </div>
       </div>
 
-      <ul role="list" className="mt-1 divide-y divide-gray-100">
-        {bookmarkList.map((markItem) => (
-          <li key={markItem.id} className="flex justify-between gap-x-6 px-1 py-2 rounded-md hover:bg-slate-100" >
-            <div className="flex min-w-0 gap-x-4">
-              <div
-                className="flex flex-col justify-center rounded-full bg-emerald-500/20 p-1 cursor-pointer"
-                onClick={() => { chrome.tabs.create({ url: markItem.url }) }}>
-                {markItem.status === -1 ? (
-                  <div className="h-2 w-2 rounded-full bg-gray-500" />
-                ) : ''}
-                {markItem.status === 0 ? (
-                  <div className="h-2 w-2 rounded-full bg-red-500" />
-                ) : ''}
-                {markItem.status === 1 ? (
-                  <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                ) : ''}
-                {markItem.status === 3 ? (
-                  <div className="h-2 w-2 rounded-full bg-yellow-500" />
-                ) : ''}
-              </div>
-              <div className="min-w-0 flex-auto">
-                <p className="text-sm font-semibold leading-6 text-gray-900 truncate cursor-pointer"
-                  title={markItem.title}
-                  onClick={() => { chrome.tabs.create({ url: markItem.url }) }}
-                >{markItem.title}</p>
-                <p className="mt-1 text-xs leading-5 text-gray-500 truncate "
-                  title={markItem.url}>{markItem.url}</p>
-              </div>
-            </div>
-            <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-              <div>
-                <p className="text-sm leading-6 text-gray-900">Added {markItem.addedString}</p>
-              </div>
-              <div className='flex items-center'>
-                {!markItem.lastUsed ? (
-                  <p className="mt-1 text-xs leading-5 text-gray-500">
-                    <span >{markItem.lastUsedString}</span>
-                  </p>
-                ) : (
-                  <div className="flex items-center gap-x-1.5">
-                    <div className="flex-none rounded-full bg-emerald-500/20 p-1">
-                      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    </div>
-                    <p className="text-xs leading-5 text-gray-500">LastUsed {markItem.lastUsedString}</p>
-                  </div>
-                )}
-                {/* {
-                  <p>{markItem.aidistance}</p>
-                } */}
-                <button className='mx-1 rounded-md bg-gray-300 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600'
-                  onClick={() => { onMarkFile(markItem) }}
-                >FILE</button>
-                <button className='mx-1 rounded-md bg-red-300 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600'
-                  onClick={() => { onMarkDel(markItem) }}
-                >DEL</button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-
+      <div className="mt-1" style={{ height: 600 }}>
+        <AutoSizer>
+          {({ height, width }) => (
+            <List
+              width={width}
+              height={height}
+              rowCount={bookmarkList.length}
+              rowHeight={64}
+              overscanRowCount={9}
+              rowRenderer={rowRenderer}
+            />
+          )}
+        </AutoSizer>
+      </div>
     </>
   )
 }

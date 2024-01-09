@@ -14,5 +14,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <section className='mx-3 my-4 px-2 py-2 border-solid border-2 rounded-md shadow'>
       <MargicSearch />
     </section>
+    <section className='mx-3 px-1 flex justify-center '>
+      <div>
+        @2023 Sean
+      </div>
+    </section>
   </React.StrictMode>
 )

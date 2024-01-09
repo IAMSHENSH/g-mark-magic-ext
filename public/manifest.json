@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "MarkMagic",
   "description": "Your browser's enchanting solution for effortless, intelligent bookmark management.",
-  "version": "0.1.7",
+  "version": "1.0.4",
   "icons": {
     "16": "icon_16.png",
     "48": "icon_48.png",
@@ -17,10 +17,16 @@
     "sidePanel",
     "bookmarks"
   ],
+  "host_permissions": ["*://*/*"],
   "background": {
-    "service_worker": "service_worker.js"
+    "service_worker": "service_worker.js",
+    "type": "module"
   },
   "side_panel": {
     "default_path": "sidepanel.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
   }
 }
